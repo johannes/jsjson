@@ -247,6 +247,8 @@ class JSONObject {
 #define JSON_FRIEND_ADAPTER(myname) \
   friend class jsjson::adapter::Serializer<myname>;
 
+#define ADD_NAMED_PROP(name, ref) o(#name, t.ref)
+
 #define ADD_PROP(name) o(#name, t.name)
 
 #define ADD_PTR_PROP(name) o(#name, *t.name)

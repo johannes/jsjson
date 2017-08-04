@@ -89,3 +89,27 @@ TEST(struct, private) {
   EXPECT_EQ(serialize(p), R"({ "privateParts": 42 })");
   EXPECT_EQ(serialize(pex), R"({ "privateParts": 23 })");
 }
+
+struct Base {
+  int field;
+};
+
+struct Extended : private Base {
+  JSON_FRIEND_ADAPTER(Extended);
+  int field;
+  Extended(int field) : Base{42}, field(field) {}
+};
+
+JSON_ADAPT_OBJECT_BEGIN(Base) {
+  ADD_PROP(field);
+} JSON_ADAPT_OBJECT_END();
+
+JSON_ADAPT_OBJECT_BEGIN(Extended) {
+  ADD_NAMED_PROP(baseField, Base::field);
+  ADD_PROP(field);
+} JSON_ADAPT_OBJECT_END();
+
+TEST(struct, inherited) {
+  Extended ex{23};
+  EXPECT_EQ(serialize(ex), R"({ "baseField": 42, "field": 23 })");
+}
