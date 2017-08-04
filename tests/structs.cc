@@ -41,12 +41,12 @@ JSON_ADAPT_OBJECT_BEGIN(Sample) {
 }
 JSON_ADAPT_OBJECT_END();
 
-TEST(struct_, simple) {
+TEST(struct, simple) {
   Example e{1, 2};
   EXPECT_EQ(serialize(e), R"({ "ex1": 1, "ex2": 2 })");
 }
 
-TEST(sttruct_, complex_) {
+TEST(struct, complex) {
   Example e{1, 2};
   Sample s = {"foo\"b\\ar",
               42,
@@ -58,4 +58,34 @@ TEST(sttruct_, complex_) {
               {{0, 1}, {1, 2}}};
 
   EXPECT_EQ(serialize(s), R"({ "foo": "foo\"b\\ar", "bar": 42, "dop": 3.141, "v": [ { "ex1": 1024, "ex2": 2048 }, { "ex1": 4096, "ex2": 8192 } ], "exref": { "ex1": 1, "ex2": 2 }, "exptr": { "ex1": 1, "ex2": 2 }, "map": { "key1": 23, "key2": 42 }, "map 2": { "key1": 23, "key2": 42 }, "map 3": { "key1": 23, "key2": 42 } })");
+}
+
+class Privates {
+  JSON_FRIEND_ADAPTER(Privates)
+  int privateParts;
+public:
+  Privates() : privateParts(42) {}
+};
+
+class PrivatesExtended : Privates {
+  JSON_FRIEND_ADAPTER(PrivatesExtended)
+  int privateParts;
+public:
+  PrivatesExtended() : privateParts(23) {}
+};
+
+JSON_ADAPT_OBJECT_BEGIN(Privates) {
+  ADD_PROP(privateParts);
+} JSON_ADAPT_OBJECT_END();
+
+JSON_ADAPT_OBJECT_BEGIN(PrivatesExtended) {
+  ADD_PROP(privateParts);
+} JSON_ADAPT_OBJECT_END();
+
+TEST(struct, private) {
+  Privates p{};
+  PrivatesExtended pex{};
+
+  EXPECT_EQ(serialize(p), R"({ "privateParts": 42 })");
+  EXPECT_EQ(serialize(pex), R"({ "privateParts": 23 })");
 }
