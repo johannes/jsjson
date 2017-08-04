@@ -1,6 +1,15 @@
 #ifndef JSJSON_H
 #define JSJSON_H
 
+/****************************************************************************
+ * jsjson                                                                   *
+ ****************************************************************************
+ * Copyright 2015-2017 Johannes Schlüter                                    *
+ ****************************************************************************
+ * This source file is subject to the 3-clause BSD license, that is bundled *
+ * with this package in the file LICENSE                                    *
+ ****************************************************************************/
+
 #include <map>
 #include <ostream>
 #include <type_traits>
