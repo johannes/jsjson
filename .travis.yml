@@ -1,0 +1,18 @@
+language: cpp
+
+addons:
+    apt:
+        sources:
+            - george-edison55-precise-backports
+        packages:
+            - cmake-data
+            - cmake
+
+compiler: gcc
+
+script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
+    - make test
