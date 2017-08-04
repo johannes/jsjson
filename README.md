@@ -1,5 +1,7 @@
 # JSJSON
 
+[![Build Status](https://travis-ci.org/johannes/jsjson.svg?branch=master)](https://travis-ci.org/johannes/jsjson)
+
 > A simple, yet powerful JSON serializer for C++
 
 This is a simple JSON serialisation library for C++11. It is easy to
