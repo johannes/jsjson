@@ -1,6 +1,6 @@
-#include "common.h"
-#include <vector>
 #include <map>
+#include <vector>
+#include "common.h"
 
 TEST(vector, integer) {
   std::vector<int> v{};
@@ -12,7 +12,6 @@ TEST(vector, integer) {
   v.push_back(-3);
   EXPECT_EQ(serialize(v), "[ 1, 2, -3 ]");
 }
-
 
 TEST(vector, string) {
   std::vector<std::string> v{};
@@ -30,9 +29,9 @@ TEST(vector, ofvector) {
   EXPECT_EQ(serialize(v), "[  ]");
   v.emplace_back(std::vector<int>{});
   EXPECT_EQ(serialize(v), R"([ [  ] ])");
-  v.emplace_back(std::vector<int>{ 1 });
+  v.emplace_back(std::vector<int>{1});
   EXPECT_EQ(serialize(v), R"([ [  ], [ 1 ] ])");
-  v.emplace_back(std::vector<int>{ 2, 3 });
+  v.emplace_back(std::vector<int>{2, 3});
   EXPECT_EQ(serialize(v), R"([ [  ], [ 1 ], [ 2, 3 ] ])");
 }
 

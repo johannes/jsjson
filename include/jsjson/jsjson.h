@@ -18,7 +18,7 @@
 namespace jsjson {
 class JSONObject;
 
-inline std::ostream& escape_string(std::ostream &os, const std::string s) {
+inline std::ostream &escape_string(std::ostream &os, const std::string s) {
   // TODO: I'm unreadable!
   os << "\"";
   for (auto c : s) {
@@ -200,10 +200,7 @@ class JSONObject {
 
  public:
   JSONObject() = delete;
-  JSONObject(std::ostream &os)
-      : os(os) {
-    os << "{ ";
-  }
+  JSONObject(std::ostream &os) : os(os) { os << "{ "; }
   ~JSONObject() { os << " }"; }
   template <typename ValueType>
   void operator()(const std::string key, const ValueType &value) {

@@ -3,12 +3,11 @@
 
 #include <limits>
 
-
-template<typename T>
+template <typename T>
 std::string serializeMin() {
   return serialize(std::numeric_limits<T>::min());
 }
-template<typename T>
+template <typename T>
 std::string serializeMax() {
   return serialize(std::numeric_limits<T>::max());
 }
@@ -43,7 +42,7 @@ TEST(jsjson, strings) {
   using namespace std::string_literals;
 
   EXPECT_EQ(serialize(""), "\"\"");
-  EXPECT_EQ(serialize(const_cast<char*>("")), "\"\"");
+  EXPECT_EQ(serialize(const_cast<char *>("")), "\"\"");
   EXPECT_EQ(serialize(""s), "\"\"");
 
   EXPECT_EQ(serialize("some string"), R"("some string")");
@@ -62,8 +61,6 @@ TEST(jsjson, strings) {
   EXPECT_EQ(serialize("some\rstring"s), R"("some\rstring")");
   EXPECT_EQ(serialize("some\tstring"s), R"("some\tstring")");
 }
-
-  
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
