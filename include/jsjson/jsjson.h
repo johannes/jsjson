@@ -173,6 +173,52 @@ struct Serializer<std::map<KeyT, T>> {
     return os;
   }
 };
+
+template <typename T1, typename T2>
+struct Serializer<std::pair<T1, T2>> {
+  static std::ostream &serialize(std::ostream &os,
+                                 const std::pair<T1, T2> &pair) {
+    JSONArray arr{os};
+    arr(pair.first);
+    arr(pair.second);
+    return os;
+  }
+};
+
+namespace {
+template <int pos, typename... Ts>
+struct Tuple {
+  static void addTupleElement(JSONArray &arr, const std::tuple<Ts...> &t) {
+    Tuple<pos - 1, Ts...>::addTupleElement(arr, t);
+    arr(std::get<pos - 1>(t));
+  }
+};
+
+template <typename... Ts>
+struct Tuple<1, Ts...> {
+  static void addTupleElement(JSONArray &arr, const std::tuple<Ts...> &t) {
+    arr(std::get<0>(t));
+  }
+};
+
+template <typename... Ts>
+struct Tuple<0, Ts...> {
+  static void addTupleElement(JSONArray &, const std::tuple<Ts...> &) {
+    // Empty tuple
+  }
+};
+}
+
+template <typename... Ts>
+struct Serializer<std::tuple<Ts...>> {
+  static std::ostream &serialize(std::ostream &os,
+                                 const std::tuple<Ts...> &tuple) {
+    JSONArray arr{os};
+    Tuple<std::tuple_size<typename std::tuple<Ts...>>::value,
+          Ts...>::addTupleElement(arr, tuple);
+    return os;
+  }
+};
 }
 
 template <typename T>
