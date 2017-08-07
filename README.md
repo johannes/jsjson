@@ -33,7 +33,7 @@ JSON_ADAPT_OBJECT_BEGIN(MyType) {
 
 int main() {
   MyType object{42, "hello world"};
-  jsjson::serialize(std::cout, object); // Will print something like { "counter": 42, "str": "hello world" }
+  std::cout << jsjson::serialize(object); // Will print something like { "counter": 42, "str": "hello world" }
 }
   
 ```
