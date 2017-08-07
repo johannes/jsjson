@@ -63,17 +63,6 @@ class JSONObject {
   ~JSONObject() { os << " }"; }
   template <typename KeyType, typename ValueType>
   void operator()(const KeyType &key, const ValueType &value);
-  /*
-  template <typename ValueType>
-  void operator()(long key, const ValueType &value) {
-    if (has_elements) {
-      os << ", ";
-    }
-    has_elements = true;
-    os << key << ": ";
-    jsjson::serialize(os, value);
-  }
-  */
 };
 
 namespace adapter {
