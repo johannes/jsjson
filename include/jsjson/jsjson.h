@@ -44,6 +44,41 @@ inline std::ostream &escape_string(std::ostream &os, const std::string s) {
   return os;
 }
 
+class JSONArray {
+  std::ostream &os;
+  bool has_elements = false;
+
+ public:
+  JSONArray() = delete;
+  JSONArray(std::ostream &os) : os(os) { os << "[ "; }
+  ~JSONArray() { os << " ]"; }
+  template <typename ValueType>
+  void operator()(const ValueType &value);
+};
+
+class JSONObject {
+  std::ostream &os;
+  bool has_elements = false;
+
+ public:
+  JSONObject() = delete;
+  JSONObject(std::ostream &os) : os(os) { os << "{ "; }
+  ~JSONObject() { os << " }"; }
+  template <typename ValueType>
+  void operator()(const std::string key, const ValueType &value);
+  /*
+  template <typename ValueType>
+  void operator()(long key, const ValueType &value) {
+    if (has_elements) {
+      os << ", ";
+    }
+    has_elements = true;
+    os << key << ": ";
+    jsjson::serialize(os, value);
+  }
+  */
+};
+
 namespace adapter {
 
 namespace {
@@ -133,18 +168,10 @@ struct Serializer<const char *> : Serializer<std::string> {};
 template <typename T>
 struct SerializerDetected<T, IS_ITERATOR> {
   static std::ostream &serialize(std::ostream &os, const T &vec) {
-    os << "[ ";
-    bool begin = true;
+    JSONArray arr{os};
     for (const auto &entry : vec) {
-      if (begin) {
-        begin = false;
-      } else {
-        os << ", ";
-      }
-      Serializer<typename std::remove_const<typename std::remove_reference<
-          decltype(entry)>::type>::type>::serialize(os, entry);
+      arr(entry);
     }
-    os << " ]";
     return os;
   }
 };
@@ -153,20 +180,10 @@ template <typename T>
 struct Serializer<std::map<std::string, T>> {
   static std::ostream &serialize(std::ostream &os,
                                  const std::map<std::string, T> &vec) {
-    bool begin = true;
-    os << "{ ";
+    JSONObject obj(os);
     for (const auto &entry : vec) {
-      if (begin) {
-        begin = false;
-      } else {
-        os << ", ";
-      }
-      // TODO: This should use the JSONObject ...
-      escape_string(os, entry.first);
-      os << ": ";
-      Serializer<T>::serialize(os, entry.second);
+      obj(entry.first, entry.second);
     }
-    os << " }";
     return os;
   }
 };
@@ -183,41 +200,30 @@ std::ostream &operator<<(std::ostream &os, Serializable<T> t) {
   adapter::Serializer<T>::serialize(os, t.val);
   return os;
 }
-  
+
 template <typename T>
 Serializable<T> serialize(T t) {
   return Serializable<T>(t);
 }
 
-class JSONObject {
-  std::ostream &os;
-  bool has_elements = false;
+template <typename ValueType>
+void JSONArray::operator()(const ValueType &value) {
+  if (has_elements) {
+    os << ", ";
+  }
+  has_elements = true;
+  os << jsjson::serialize(value);
+}
 
- public:
-  JSONObject() = delete;
-  JSONObject(std::ostream &os) : os(os) { os << "{ "; }
-  ~JSONObject() { os << " }"; }
-  template <typename ValueType>
-  void operator()(const std::string key, const ValueType &value) {
-    if (has_elements) {
-      os << ", ";
-    }
-    has_elements = true;
-    escape_string(os, key);
-    os << ": " << jsjson::serialize(value);
+template <typename ValueType>
+void JSONObject::operator()(const std::string key, const ValueType &value) {
+  if (has_elements) {
+    os << ", ";
   }
-  /*
-  template <typename ValueType>
-  void operator()(long key, const ValueType &value) {
-    if (has_elements) {
-      os << ", ";
-    }
-    has_elements = true;
-    os << key << ": ";
-    jsjson::serialize(os, value);
-  }
-  */
-};
+  has_elements = true;
+  escape_string(os, key);
+  os << ": " << jsjson::serialize(value);
+}
 }
 
 #define JSON_ADAPT_OBJECT_BEGIN(Type)                                 \
