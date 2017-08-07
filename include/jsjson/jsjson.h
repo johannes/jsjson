@@ -198,7 +198,7 @@ void JSONArray::operator()(const ValueType &value) {
     os << ", ";
   }
   has_elements = true;
-  os << jsjson::serialize(value);
+  adapter::Serializer<ValueType>::serialize(os, value);
 }
 
 template <typename T>
@@ -227,7 +227,8 @@ void JSONObject::operator()(const KeyType &key, const ValueType &value) {
   }
   has_elements = true;
   objectKey<KeyType>::encode(os, key);
-  os << ": " << jsjson::serialize(value);
+  os << ": ";
+  adapter::Serializer<ValueType>::serialize(os, value);
 }
 }
 
