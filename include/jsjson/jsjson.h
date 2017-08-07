@@ -53,7 +53,6 @@ class JSONArray {
   void operator()(const ValueType &value);
 };
 
-//template<typename KeyType>
 class JSONObject {
   std::ostream &os;
   bool has_elements = false;
@@ -231,7 +230,6 @@ struct objectKey<std::string> {
 
 template <>
 struct objectKey<char *> : objectKey<std::string> {};
-  
 
 template <typename KeyType, typename ValueType>
 void JSONObject::operator()(const KeyType &key, const ValueType &value) {
@@ -242,7 +240,6 @@ void JSONObject::operator()(const KeyType &key, const ValueType &value) {
   objectKey<KeyType>::encode(os, key);
   os << ": " << jsjson::serialize(value);
 }
-
 }
 
 #define JSON_ADAPT_OBJECT_BEGIN(Type)                                 \
