@@ -103,22 +103,17 @@ struct SerializerDetected {
   static std::ostream &serialize(std::ostream &os, NoMatchingSpecialisation) {
     return os;
   }
-  static NoMatchingSpecialisation unserialize(std::istream &is) { return is; }
 };
 
 template <typename T>
 struct SerializerDetected<T, IS_ARITHMETIC> {
   static std::ostream &serialize(std::ostream &os, T t) { return os << t; }
-  static T unserialize(std::istream &is) { return 0; }
 };
 
 template <typename T>
 struct Serializer {
   static std::ostream &serialize(std::ostream &os, T t) {
     return SerializerDetected<T, typename type_flag<T>::type>::serialize(os, t);
-  }
-  static T unserialize(std::istream &is) {
-    return SerializerDetected<T, typename type_flag<T>::type>::unserialize(is);
   }
 };
 
@@ -173,11 +168,6 @@ struct Serializer<std::map<std::string, T>> {
     }
     os << " }";
     return os;
-  }
-
-  static std::vector<T> unserialize(const std::istream &json) {
-    std::vector<T> retval;
-    return retval;
   }
 };
 }
