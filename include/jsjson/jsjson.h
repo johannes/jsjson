@@ -14,7 +14,6 @@
 #include <type_traits>
 
 namespace jsjson {
-class JSONObject;
 
 inline std::ostream &escape_string(std::ostream &os, const std::string s) {
   // TODO: I'm unreadable!
@@ -54,6 +53,7 @@ class JSONArray {
   void operator()(const ValueType &value);
 };
 
+//template<typename KeyType>
 class JSONObject {
   std::ostream &os;
   bool has_elements = false;
@@ -62,8 +62,8 @@ class JSONObject {
   JSONObject() = delete;
   JSONObject(std::ostream &os) : os(os) { os << "{ "; }
   ~JSONObject() { os << " }"; }
-  template <typename ValueType>
-  void operator()(const std::string key, const ValueType &value);
+  template <typename KeyType, typename ValueType>
+  void operator()(const KeyType &key, const ValueType &value);
   /*
   template <typename ValueType>
   void operator()(long key, const ValueType &value) {
@@ -174,10 +174,10 @@ struct SerializerDetected<T, IS_ITERATOR> {
   }
 };
 
-template <typename T>
-struct Serializer<std::map<std::string, T>> {
+template <typename KeyT, typename T>
+struct Serializer<std::map<KeyT, T>> {
   static std::ostream &serialize(std::ostream &os,
-                                 const std::map<std::string, T> &vec) {
+                                 const std::map<KeyT, T> &vec) {
     JSONObject obj(os);
     for (const auto &entry : vec) {
       obj(entry.first, entry.second);
@@ -213,15 +213,36 @@ void JSONArray::operator()(const ValueType &value) {
   os << jsjson::serialize(value);
 }
 
-template <typename ValueType>
-void JSONObject::operator()(const std::string key, const ValueType &value) {
+template <typename T>
+struct objectKey {
+  static std::ostream &encode(std::ostream &os, T key) {
+    // TODO: Maybe use C++17's std::to_chars, or depend on stream
+    //       or something else, which works with more types
+    return escape_string(os, std::to_string(key));
+  }
+};
+
+template <>
+struct objectKey<std::string> {
+  static std::ostream &encode(std::ostream &os, const std::string &key) {
+    return escape_string(os, key);
+  }
+};
+
+template <>
+struct objectKey<char *> : objectKey<std::string> {};
+  
+
+template <typename KeyType, typename ValueType>
+void JSONObject::operator()(const KeyType &key, const ValueType &value) {
   if (has_elements) {
     os << ", ";
   }
   has_elements = true;
-  escape_string(os, key);
+  objectKey<KeyType>::encode(os, key);
   os << ": " << jsjson::serialize(value);
 }
+
 }
 
 #define JSON_ADAPT_OBJECT_BEGIN(Type)                                 \
@@ -244,14 +265,14 @@ void JSONObject::operator()(const std::string key, const ValueType &value) {
 #define JSON_FRIEND_ADAPTER(myname) \
   friend class jsjson::adapter::Serializer<myname>;
 
-#define ADD_NAMED_PROP(name, ref) o(#name, t.ref)
+#define ADD_NAMED_PROP(name, ref) o(std::string{#name}, t.ref)
 
-#define ADD_PROP(name) o(#name, t.name)
+#define ADD_PROP(name) o(std::string{#name}, t.name)
 
-#define ADD_PTR_PROP(name) o(#name, *t.name)
+#define ADD_PTR_PROP(name) o(std::string{#name}, *t.name)
 
 #define DYNAMIC_PROP_BEGIN(name, object) \
-        o(name, ([](const type &object) {
+        o(std::string{name}, ([](const type &object) {
 #define DYNAMIC_PROP_END() \
   } )(t));
 

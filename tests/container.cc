@@ -43,3 +43,13 @@ TEST(map, int) {
   m.emplace(std::make_pair(std::string{"new\nline"}, 2));
   EXPECT_EQ(serialize(m), R"({ "foo": 1, "new\nline": 2 })");
 }
+
+TEST(map, intkey) {
+  std::map<int, int> m{};
+  EXPECT_EQ(serialize(m), "{  }");
+  m.emplace(std::make_pair(0, 1));
+  EXPECT_EQ(serialize(m), R"({ "0": 1 })");
+  m.emplace(std::make_pair(1, 2));
+  EXPECT_EQ(serialize(m), R"({ "0": 1, "1": 2 })");
+
+}
