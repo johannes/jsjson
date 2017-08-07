@@ -9,7 +9,7 @@
 template <typename T>
 std::string serialize(T value) {
   std::stringstream s;
-  jsjson::serialize(s, value);
+  s << jsjson::serialize(value);
   return s.str();
 }
 

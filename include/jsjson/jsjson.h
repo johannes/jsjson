@@ -183,15 +183,20 @@ struct Serializer<std::map<std::string, T>> {
 }
 
 template <typename T>
-std::ostream &serialize(std::ostream &os, T t) {
-  adapter::Serializer<T>::serialize(os, t);
-  return os;
-}
+struct Serializable {
+  T val;
+  Serializable(T val) : val(val) {}
+};
 
 template <typename T>
-T unserialize(std::ostream &os) {
-  adapter::Serializer<T>::unserialize(os);
+std::ostream &operator<<(std::ostream &os, Serializable<T> t) {
+  adapter::Serializer<T>::serialize(os, t.val);
   return os;
+}
+  
+template <typename T>
+Serializable<T> serialize(T t) {
+  return Serializable<T>(t);
 }
 
 class JSONObject {
@@ -209,9 +214,9 @@ class JSONObject {
     }
     has_elements = true;
     escape_string(os, key);
-    os << ": ";
-    serialize(os, value);
+    os << ": " << jsjson::serialize(value);
   }
+  /*
   template <typename ValueType>
   void operator()(long key, const ValueType &value) {
     if (has_elements) {
@@ -219,8 +224,9 @@ class JSONObject {
     }
     has_elements = true;
     os << key << ": ";
-    serialize(os, value);
+    jsjson::serialize(os, value);
   }
+  */
 };
 }
 
