@@ -10,10 +10,8 @@
  * with this package in the file LICENSE                                    *
  ****************************************************************************/
 
-#include <map>
 #include <ostream>
 #include <type_traits>
-#include <vector>
 
 namespace jsjson {
 class JSONObject;
