@@ -4,6 +4,7 @@
 #include <vector>
 #include <tuple>
 #include "common.h"
+#include "jsjson/jsjson.h"
 
 TEST(itertor,vectorOfInteger) {
   std::vector<int> v{};

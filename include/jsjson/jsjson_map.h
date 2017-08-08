@@ -1,5 +1,5 @@
-#ifndef JSJSON_H
-#define JSJSON_H
+#ifndef JSJSON_MAP
+#define JSJSON_MAP
 
 /****************************************************************************
  * jsjson                                                                   *
@@ -10,10 +10,22 @@
  * with this package in the file LICENSE                                    *
  ****************************************************************************/
 
-#include "jsjson/jsjson_base.h"
-#include "jsjson/jsjson_map.h"
-#include "jsjson/jsjson_pair.h"
-#include "jsjson/jsjson_tuple.h"
-#include "jsjson/jsjson_iterator.h"
-#endif
+namespace jsjson {
+namespace adapter {
 
+template <typename KeyT, typename T>
+struct Serializer<std::map<KeyT, T>> {
+  static std::ostream &serialize(std::ostream &os,
+                                 const std::map<KeyT, T> &vec) {
+    JSONObject obj(os);
+    for (const auto &entry : vec) {
+      obj(entry.first, entry.second);
+    }
+    return os;
+  }
+};
+
+}
+}
+
+#endif

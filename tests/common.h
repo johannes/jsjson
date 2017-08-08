@@ -2,7 +2,7 @@
 #define HAVE_COMMON_H
 
 #include "gtest/gtest.h"
-#include "jsjson/jsjson.h"
+#include "jsjson/jsjson_base.h"
 
 #include <sstream>
 

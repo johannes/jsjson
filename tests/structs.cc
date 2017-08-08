@@ -1,5 +1,6 @@
 #include "common.h"
 #include "gtest/gtest.h"
+#include "jsjson/jsjson.h"
 
 // custom data types ...
 // TODO: Split this into multiple smaller chunks instead of a big thing

@@ -1,5 +1,5 @@
-#ifndef JSJSON_H
-#define JSJSON_H
+#ifndef JSJSON_ITERATOR
+#define JSJSON_ITERATOR
 
 /****************************************************************************
  * jsjson                                                                   *
@@ -10,10 +10,21 @@
  * with this package in the file LICENSE                                    *
  ****************************************************************************/
 
-#include "jsjson/jsjson_base.h"
-#include "jsjson/jsjson_map.h"
-#include "jsjson/jsjson_pair.h"
-#include "jsjson/jsjson_tuple.h"
-#include "jsjson/jsjson_iterator.h"
-#endif
+namespace jsjson {
+namespace adapter {
 
+template <typename T>
+struct SerializerDetected<T, IS_ITERATOR> {
+  static std::ostream &serialize(std::ostream &os, const T &vec) {
+    JSONArray arr{os};
+    for (const auto &entry : vec) {
+      arr(entry);
+    }
+    return os;
+  }
+};
+
+}
+}
+
+#endif
