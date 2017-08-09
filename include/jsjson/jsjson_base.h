@@ -15,7 +15,7 @@
 
 namespace jsjson {
 
-inline std::ostream &escape_string(std::ostream &os, const std::string s) {
+inline std::ostream &escape_string(std::ostream &os, const std::string &s) {
   // TODO: I'm unreadable!
   os << "\"";
   for (auto c : s) {
