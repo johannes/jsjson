@@ -6,11 +6,13 @@
 
 #include <sstream>
 
+namespace test {
 template <typename T>
-std::string serialize(T value) {
+std::string serialize(T&& value) {
   std::stringstream s;
-  s << jsjson::serialize(value);
+  s << jsjson::serialize(std::forward<T>(value));
   return s.str();
+}
 }
 
 #endif

@@ -43,7 +43,7 @@ JSON_ADAPT_OBJECT_END();
 
 TEST(struct, simple) {
   Example e{1, 2};
-  EXPECT_EQ(serialize(e), R"({ "ex1": 1, "ex2": 2 })");
+  EXPECT_EQ(test::serialize(e), R"({ "ex1": 1, "ex2": 2 })");
 }
 
 TEST(struct, complex) {
@@ -58,7 +58,7 @@ TEST(struct, complex) {
               {{0, 1}, {1, 2}}};
 
   EXPECT_EQ(
-      serialize(s),
+      test::serialize(s),
       R"({ "foo": "foo\"b\\ar", "bar": 42, "dop": 3.141, "v": [ { "ex1": 1024, "ex2": 2048 }, { "ex1": 4096, "ex2": 8192 } ], "exref": { "ex1": 1, "ex2": 2 }, "exptr": { "ex1": 1, "ex2": 2 }, "map": { "key1": 23, "key2": 42 }, "map 2": { "key1": 23, "key2": 42 }, "map 3": { "key1": 23, "key2": 42 } })");
 }
 
@@ -88,8 +88,8 @@ TEST(struct, private) {
   Privates p{};
   PrivatesExtended pex{};
 
-  EXPECT_EQ(serialize(p), R"({ "privateParts": 42 })");
-  EXPECT_EQ(serialize(pex), R"({ "privateParts": 23 })");
+  EXPECT_EQ(test::serialize(p), R"({ "privateParts": 42 })");
+  EXPECT_EQ(test::serialize(pex), R"({ "privateParts": 23 })");
 }
 
 struct Base {
@@ -113,5 +113,5 @@ JSON_ADAPT_OBJECT_END();
 
 TEST(struct, inherited) {
   Extended ex{23};
-  EXPECT_EQ(serialize(ex), R"({ "baseField": 42, "field": 23 })");
+  EXPECT_EQ(test::serialize(ex), R"({ "baseField": 42, "field": 23 })");
 }
