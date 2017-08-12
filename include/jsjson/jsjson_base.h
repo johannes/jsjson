@@ -73,20 +73,21 @@ template <typename>
 struct sfinae_true : std::true_type {};
 
 template <typename T>
-static auto test_begin(int)
-    -> sfinae_true<decltype(std::begin(std::declval<T>()))>;
+static auto test_cbegin(int)
+    -> sfinae_true<decltype(std::cbegin(std::declval<T>()))>;
 template <typename T>
-static auto test_begin(long) -> std::false_type;
+static auto test_cbegin(long) -> std::false_type;
 
 template <typename T>
-static auto test_end(int) -> sfinae_true<decltype(std::end(std::declval<T>()))>;
+static auto test_cend(int)
+    -> sfinae_true<decltype(std::cend(std::declval<T>()))>;
 template <typename T>
-static auto test_end(long) -> std::false_type;
+static auto test_cend(long) -> std::false_type;
 
 template <typename T>
 struct is_iterator
-    : std::integral_constant<bool, decltype(test_begin<T>(1))::value &&decltype(
-                                       test_end<T>(1))::value> {};
+    : std::integral_constant<bool, decltype(test_cbegin<T>(1))::value
+                                       &&decltype(test_cend<T>(1))::value> {};
 }
 
 struct IS_UNHANDLED {};
@@ -133,10 +134,13 @@ struct SerializerDetected<T, IS_ARITHMETIC> {
 
 template <typename T>
 struct Serializer {
-  static std::ostream &serialize(std::ostream &os, T t) {
+  static std::ostream &serialize(std::ostream &os, const T &t) {
     return SerializerDetected<T, typename type_flag<T>::type>::serialize(os, t);
   }
 };
+
+template <typename T>
+struct Serializer<const T> : Serializer<T> {};
 
 template <>
 struct Serializer<std::string> {
@@ -149,24 +153,32 @@ struct Serializer<std::string> {
 template <>
 struct Serializer<char *> : Serializer<std::string> {};
 template <>
+struct Serializer<char *const> : Serializer<std::string> {};
+template <>
 struct Serializer<const char *> : Serializer<std::string> {};
-
 }
 
 template <typename T>
 struct Serializable {
-  T val;
-  Serializable(T val) : val(val) {}
+  const T &val;
+  Serializable(const T &val) : val(val) {}
+};
+
+template <size_t N>
+struct Serializable<char[N]> {
+  const char *val;
+  Serializable(const char *val) : val(val) {}
 };
 
 template <typename T>
-std::ostream &operator<<(std::ostream &os, Serializable<T> t) {
-  adapter::Serializer<T>::serialize(os, t.val);
+std::ostream &operator<<(std::ostream &os, const Serializable<T> &t) {
+  adapter::Serializer<typename std::remove_reference<typename std::remove_const<
+      decltype(t.val)>::type>::type>::serialize(os, t.val);
   return os;
 }
 
 template <typename T>
-Serializable<T> serialize(T t) {
+auto serialize(const T &t) -> auto {
   return Serializable<T>(t);
 }
 
@@ -176,7 +188,7 @@ void JSONArray::operator()(const ValueType &value) {
     os << ", ";
   }
   has_elements = true;
-  adapter::Serializer<ValueType>::serialize(os, value);
+  os << jsjson::serialize(value);
 }
 
 template <typename T>
@@ -205,8 +217,7 @@ void JSONObject::operator()(const KeyType &key, const ValueType &value) {
   }
   has_elements = true;
   objectKey<KeyType>::encode(os, key);
-  os << ": ";
-  adapter::Serializer<ValueType>::serialize(os, value);
+  os << ": " << jsjson::serialize(value);
 }
 }
 
@@ -246,4 +257,3 @@ void JSONObject::operator()(const KeyType &key, const ValueType &value) {
   DYNAMIC_PROP_END();
 
 #endif
-

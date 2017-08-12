@@ -1,3 +1,4 @@
+#include <memory>
 #include "common.h"
 #include "gtest/gtest.h"
 #include "jsjson/jsjson.h"
@@ -14,8 +15,8 @@ struct Sample {
   int bar;
   double dop;
   std::vector<Example> v;
-  const Example &exref;
-  Example *exptr;
+  const Example& exref;
+  Example* exptr;
   std::map<std::string, long> map;
   std::map<int, int> intmap;
   std::map<std::string, long> get_map() const { return map; }
@@ -114,4 +115,25 @@ JSON_ADAPT_OBJECT_END();
 TEST(struct, inherited) {
   Extended ex{23};
   EXPECT_EQ(test::serialize(ex), R"({ "baseField": 42, "field": 23 })");
+}
+
+class NonCopyableAndNonConstructible {
+ private:
+  NonCopyableAndNonConstructible() = delete;
+  NonCopyableAndNonConstructible(const NonCopyableAndNonConstructible& other) =
+      delete;
+  NonCopyableAndNonConstructible& operator=(
+      const NonCopyableAndNonConstructible&) = delete;
+
+ public:
+  int i;
+  NonCopyableAndNonConstructible(int i) : i{i} {}
+};
+
+JSON_ADAPT_OBJECT_BEGIN(NonCopyableAndNonConstructible) { ADD_PROP(i); }
+JSON_ADAPT_OBJECT_END();
+
+TEST(struct, noncopyable) {
+  NonCopyableAndNonConstructible noncpy{42};
+  EXPECT_EQ(test::serialize(noncpy), R"({ "i": 42 })");
 }

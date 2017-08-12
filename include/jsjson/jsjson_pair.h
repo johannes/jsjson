@@ -23,7 +23,6 @@ struct Serializer<std::pair<T1, T2>> {
     return os;
   }
 };
-
 }
 }
 

@@ -1,12 +1,12 @@
-#include <map>
 #include <array>
 #include <list>
-#include <vector>
+#include <map>
 #include <tuple>
+#include <vector>
 #include "common.h"
 #include "jsjson/jsjson.h"
 
-TEST(itertor,vectorOfInteger) {
+TEST(itertor, vectorOfInteger) {
   std::vector<int> v{};
   EXPECT_EQ(test::serialize(v), "[  ]");
   v.push_back(1);
@@ -40,19 +40,18 @@ TEST(iterator, vectorOfVector) {
 }
 
 TEST(iterator, stdarray) {
-  std::array<int, 3> a{ {1, 2, 3} };
+  std::array<int, 3> a{{1, 2, 3}};
   EXPECT_EQ(test::serialize(a), "[ 1, 2, 3 ]");
 }
 
 TEST(iterator, list) {
-  std::list<int> l1 {  };
+  std::list<int> l1{};
   EXPECT_EQ(test::serialize(l1), "[  ]");
-  std::list<int> l2 = { 1, 2 };
+  std::list<int> l2 = {1, 2};
   EXPECT_EQ(test::serialize(l2), "[ 1, 2 ]");
-  std::list<int> l3 = { 1, 2, 3 };
+  std::list<int> l3 = {1, 2, 3};
   EXPECT_EQ(test::serialize(l3), "[ 1, 2, 3 ]");
 }
-
 
 TEST(map, int) {
   std::map<std::string, int> m{};
@@ -70,7 +69,6 @@ TEST(map, intkey) {
   EXPECT_EQ(test::serialize(m), R"({ "0": 1 })");
   m.emplace(std::make_pair(1, 2));
   EXPECT_EQ(test::serialize(m), R"({ "0": 1, "1": 2 })");
-
 }
 
 TEST(pair, intsring) {
@@ -83,5 +81,6 @@ TEST(tuple, tuple) {
   using namespace std::string_literals;
   EXPECT_EQ(test::serialize(std::make_tuple()), R"([  ])");
   EXPECT_EQ(test::serialize(std::make_tuple("A")), R"([ "A" ])");
-  EXPECT_EQ(test::serialize(std::make_tuple("A", "B"s, 1337)), R"([ "A", "B", 1337 ])");
+  EXPECT_EQ(test::serialize(std::make_tuple("A", "B"s, 1337)),
+            R"([ "A", "B", 1337 ])");
 }

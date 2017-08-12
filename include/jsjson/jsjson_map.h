@@ -24,7 +24,6 @@ struct Serializer<std::map<KeyT, T>> {
     return os;
   }
 };
-
 }
 }
 

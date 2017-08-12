@@ -23,7 +23,6 @@ struct SerializerDetected<T, IS_ITERATOR> {
     return os;
   }
 };
-
 }
 }
 

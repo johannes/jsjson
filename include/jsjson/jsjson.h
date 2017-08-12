@@ -11,9 +11,8 @@
  ****************************************************************************/
 
 #include "jsjson/jsjson_base.h"
+#include "jsjson/jsjson_iterator.h"
 #include "jsjson/jsjson_map.h"
 #include "jsjson/jsjson_pair.h"
 #include "jsjson/jsjson_tuple.h"
-#include "jsjson/jsjson_iterator.h"
 #endif
-
