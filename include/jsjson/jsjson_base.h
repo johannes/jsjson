@@ -73,21 +73,21 @@ template <typename>
 struct sfinae_true : std::true_type {};
 
 template <typename T>
-static auto test_cbegin(int)
-    -> sfinae_true<decltype(std::cbegin(std::declval<T>()))>;
+static auto test_begin(int)
+    -> sfinae_true<decltype(std::begin(std::declval<T>()))>;
 template <typename T>
-static auto test_cbegin(long) -> std::false_type;
+static auto test_begin(long) -> std::false_type;
 
 template <typename T>
-static auto test_cend(int)
-    -> sfinae_true<decltype(std::cend(std::declval<T>()))>;
+static auto test_end(int)
+    -> sfinae_true<decltype(std::end(std::declval<T>()))>;
 template <typename T>
-static auto test_cend(long) -> std::false_type;
+static auto test_end(long) -> std::false_type;
 
 template <typename T>
 struct is_iterator
-    : std::integral_constant<bool, decltype(test_cbegin<T>(1))::value
-                                       &&decltype(test_cend<T>(1))::value> {};
+    : std::integral_constant<bool, decltype(test_begin<T>(1))::value
+                                       &&decltype(test_end<T>(1))::value> {};
 }
 
 struct IS_UNHANDLED {};
