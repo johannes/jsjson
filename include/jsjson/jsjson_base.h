@@ -207,6 +207,9 @@ struct objectKey<std::string> {
   }
 };
 
+template <std::size_t N>
+struct objectKey<char[N]> : objectKey<std::string> {};
+
 template <>
 struct objectKey<char *> : objectKey<std::string> {};
 
@@ -248,7 +251,7 @@ void JSONObject::operator()(const KeyType &key, const ValueType &value) {
 #define ADD_PTR_PROP(name) o(std::string{#name}, *t.name)
 
 #define DYNAMIC_PROP_BEGIN(name, object) \
-        o(std::string{name}, ([](const type &object) {
+        o(name, ([](const type &object) {
 #define DYNAMIC_PROP_END() \
   } )(t));
 
