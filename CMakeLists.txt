@@ -38,8 +38,9 @@ set_target_properties(libgmock PROPERTIES
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
 )
 
-include_directories("${source_dir}/googletest/include"
-                    "${source_dir}/googlemock/include")
+set(GTEST_LIBRARY "${binary_dir}/googlemock/gtest/libgtest.a")
+set(GTEST_MAIN_LIBRARY "${binary_dir}/googlemock/gtest/libgtest.a")
+set(GTEST_INCLUDE_DIR "${source_dir}/googletest/include")
 
 # END gtest
 
