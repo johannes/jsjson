@@ -39,7 +39,7 @@ set_target_properties(libgmock PROPERTIES
 )
 
 set(GTEST_LIBRARY "${binary_dir}/googlemock/gtest/libgtest.a")
-set(GTEST_MAIN_LIBRARY "${binary_dir}/googlemock/gtest/libgtest.a")
+set(GTEST_MAIN_LIBRARY "${binary_dir}/googlemock/gtest/libgtest_main.a")
 set(GTEST_INCLUDE_DIR "${source_dir}/googletest/include")
 
 # END gtest
