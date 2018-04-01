@@ -54,5 +54,5 @@ Egocentric name choice - JS are my initials and the doubling felt amusing.
 
 ## License
 
-Currently using [3-clause-BSD-license](LICENSE). Could eventually be reliensed 
+Currently using [3-clause-BSD-license](LICENSE). Could eventually be relicensed 
 on request.
